@@ -3,6 +3,7 @@ package com.currencycloud.transactbench.service;
 import com.currencycloud.transactbench.config.ProviderConfig;
 import com.currencycloud.transactbench.config.TransactionConfigProperties;
 import com.currencycloud.transactbench.model.Transaction;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +50,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", count);
+                "provider1", "sepa", count, null);
 
         // Then
         assertThat(transactions).hasSize(count);
@@ -63,7 +64,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", count);
+                "provider1", "sepa", count, null);
 
         // Then
         assertThat(transactions).hasSize(count);
@@ -81,7 +82,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", count);
+                "provider1", "sepa", count, null);
 
         // Then
         List<String> trackingIds = transactions.stream()
@@ -99,7 +100,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                provider, paymentRail, 3);
+                provider, paymentRail, 3, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -115,7 +116,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -130,7 +131,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -148,7 +149,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -168,7 +169,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -186,7 +187,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -201,7 +202,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -216,7 +217,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 50);
+                "provider1", "sepa", 50, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -234,7 +235,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 50);
+                "provider1", "sepa", 50, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -250,7 +251,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 10);
+                "provider1", "sepa", 10, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -267,7 +268,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 20);
+                "provider1", "sepa", 20, null);
 
         // Then
         List<String> references = transactions.stream()
@@ -283,7 +284,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 2);
+                "provider1", "sepa", 2, null);
 
         // Then
         transactions.forEach(transaction -> {
@@ -298,11 +299,11 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 5);
+                "provider1", "sepa", 5, null);
 
         // Then
         transactions.forEach(transaction -> {
-            assertThat(transaction.getId()).isEqualTo(transaction.getTrackingId());
+            assertThat(transaction.getId()).isNotEqualTo(transaction.getTrackingId());
         });
     }
 
@@ -314,7 +315,7 @@ class TransactionGeneratorServiceTest {
 
         // When & Then
         assertThatThrownBy(() -> transactionGeneratorService.generateTransactions(
-                "invalid-provider", "sepa", 1))
+                "invalid-provider", "sepa", 1, UUID.randomUUID()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Provider not found");
     }
@@ -326,7 +327,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 0);
+                "provider1", "sepa", 0, null);
 
         // Then
         assertThat(transactions).isEmpty();
@@ -339,7 +340,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", 1);
+                "provider1", "sepa", 1, UUID.randomUUID());
 
         // Then
         assertThat(transactions).hasSize(1);
@@ -358,7 +359,7 @@ class TransactionGeneratorServiceTest {
 
         // When
         List<Transaction> transactions = transactionGeneratorService.generateTransactions(
-                "provider1", "sepa", largeCount);
+                "provider1", "sepa", largeCount, null);
 
         // Then
         assertThat(transactions).hasSize(largeCount);

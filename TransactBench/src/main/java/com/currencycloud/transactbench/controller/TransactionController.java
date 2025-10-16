@@ -27,15 +27,16 @@ public class TransactionController {
     public ResponseEntity<TransactionGenerationResponse> generateTransactions(
             @Valid @RequestBody TransactionGenerationRequest request) {
 
-        log.info("Received request to generate {} transactions for provider: {}, paymentRail: {}",
-                request.getNumberOfMessages(), request.getProvider(), request.getPaymentRail());
+      log.info("Received request to generate {} transactions for provider: {}, paymentRail: {}, transactionId: {}",
+          request.getNumberOfMessages(), request.getProvider(), request.getPaymentRail(), request.getTransactionId());
 
-        try {
+      try {
             // Generate transactions
             List<Transaction> transactions = generatorService.generateTransactions(
                     request.getProvider(),
                     request.getPaymentRail(),
-                    request.getNumberOfMessages()
+                    request.getNumberOfMessages(),
+                    request.getTransactionId()
             );
 
             // Publish to RabbitMQ
