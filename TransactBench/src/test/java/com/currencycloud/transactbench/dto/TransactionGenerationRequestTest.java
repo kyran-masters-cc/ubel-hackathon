@@ -27,7 +27,7 @@ class TransactionGenerationRequestTest {
     void allArgsConstructor_ShouldCreateRequestWithAllFields() {
         // When
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // Then
@@ -67,7 +67,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldPassWithValidData() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // When
@@ -81,7 +81,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenProviderIsNull() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                null, "sepa", 10
+                null, "sepa", 10, null
         );
 
         // When
@@ -98,7 +98,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenProviderIsEmpty() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "", "sepa", 10
+                "", "sepa", 10, null
         );
 
         // When
@@ -114,7 +114,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenProviderIsBlank() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "   ", "sepa", 10
+                "   ", "sepa", 10, null
         );
 
         // When
@@ -130,7 +130,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenPaymentRailIsNull() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", null, 10
+                "provider1", null, 10, null
         );
 
         // When
@@ -147,7 +147,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenPaymentRailIsEmpty() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "", 10
+                "provider1", "", 10, null
         );
 
         // When
@@ -163,7 +163,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenPaymentRailIsBlank() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "   ", 10
+                "provider1", "   ", 10, null
         );
 
         // When
@@ -179,7 +179,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenNumberOfMessagesIsNull() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", null
+                "provider1", "sepa", null, null
         );
 
         // When
@@ -196,7 +196,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenNumberOfMessagesIsZero() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 0
+                "provider1", "sepa", 0, null
         );
 
         // When
@@ -212,7 +212,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWhenNumberOfMessagesIsNegative() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", -5
+                "provider1", "sepa", -5, null
         );
 
         // When
@@ -228,7 +228,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldPassWithMinimumValidNumberOfMessages() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 1
+                "provider1", "sepa", 1, null
         );
 
         // When
@@ -242,7 +242,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldPassWithLargeNumberOfMessages() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 10000
+                "provider1", "sepa", 10000, null
         );
 
         // When
@@ -256,7 +256,7 @@ class TransactionGenerationRequestTest {
     void validation_ShouldFailWithMultipleViolations() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                null, null, null
+                null, null, null, null
         );
 
         // When
@@ -270,10 +270,10 @@ class TransactionGenerationRequestTest {
     void equals_ShouldReturnTrue_WhenRequestsAreEqual() {
         // Given
         TransactionGenerationRequest request1 = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
         TransactionGenerationRequest request2 = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // When & Then
@@ -284,10 +284,10 @@ class TransactionGenerationRequestTest {
     void equals_ShouldReturnFalse_WhenRequestsAreDifferent() {
         // Given
         TransactionGenerationRequest request1 = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
         TransactionGenerationRequest request2 = new TransactionGenerationRequest(
-                "provider2", "swift", 20
+                "provider2", "swift", 20, null
         );
 
         // When & Then
@@ -298,7 +298,7 @@ class TransactionGenerationRequestTest {
     void hashCode_ShouldBeConsistent() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // When
@@ -313,10 +313,10 @@ class TransactionGenerationRequestTest {
     void hashCode_ShouldBeEqual_WhenRequestsAreEqual() {
         // Given
         TransactionGenerationRequest request1 = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
         TransactionGenerationRequest request2 = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // When & Then
@@ -327,7 +327,7 @@ class TransactionGenerationRequestTest {
     void toString_ShouldContainAllFields() {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // When
@@ -343,7 +343,7 @@ class TransactionGenerationRequestTest {
     void jsonSerialization_ShouldSerializeCorrectly() throws Exception {
         // Given
         TransactionGenerationRequest request = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10, null
         );
 
         // When
@@ -382,7 +382,7 @@ class TransactionGenerationRequestTest {
     void jsonRoundTrip_ShouldPreserveData() throws Exception {
         // Given
         TransactionGenerationRequest originalRequest = new TransactionGenerationRequest(
-                "provider1", "sepa", 10
+                "provider1", "sepa", 10,null
         );
 
         // When

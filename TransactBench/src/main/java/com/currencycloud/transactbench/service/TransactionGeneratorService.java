@@ -24,14 +24,15 @@ public class TransactionGeneratorService {
     private static final Random random = new Random();
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public List<Transaction> generateTransactions(String provider, String paymentRail, int count) {
+    public List<Transaction> generateTransactions(String provider, String paymentRail, int count, UUID transactionId) {
+        String transactionIdStr = transactionId != null ? transactionId.toString() : null;
         log.info("Generating {} transactions for provider: {}, paymentRail: {}", count, provider, paymentRail);
 
         ProviderConfig config = configProperties.getConfig(provider, paymentRail);
         List<Transaction> transactions = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            Transaction transaction = buildTransaction(provider, paymentRail, config);
+            Transaction transaction = buildTransaction(provider, paymentRail, config, transactionIdStr);
             transactions.add(transaction);
         }
 
@@ -39,17 +40,17 @@ public class TransactionGeneratorService {
         return transactions;
     }
 
-    private Transaction buildTransaction(String provider, String paymentRail, ProviderConfig config) {
-        String transactionId = UUID.randomUUID().toString();
+    private Transaction buildTransaction(String provider, String paymentRail, ProviderConfig config, String transactionId) {
+        String actualTransactionId = transactionId != null ? transactionId : UUID.randomUUID().toString();
 
         return Transaction.builder()
-                .id(transactionId)
+                .id(actualTransactionId)
                 .version(2)
                 .creditDebit("credit")
                 .amount(generateRandomAmount())
                 .currency(config.getCurrency())
                 .valueDate(generateFutureDate())
-                .trackingId(transactionId)
+                .trackingId(actualTransactionId)
                 .reference(generateReference())
                 .paymentRail(paymentRail)
                 .provider(provider)
