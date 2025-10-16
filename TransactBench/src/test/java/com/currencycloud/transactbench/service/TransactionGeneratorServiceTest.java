@@ -303,7 +303,7 @@ class TransactionGeneratorServiceTest {
 
         // Then
         transactions.forEach(transaction -> {
-            assertThat(transaction.getId()).isEqualTo(transaction.getTrackingId());
+            assertThat(transaction.getId()).isNotEqualTo(transaction.getTrackingId());
         });
     }
 

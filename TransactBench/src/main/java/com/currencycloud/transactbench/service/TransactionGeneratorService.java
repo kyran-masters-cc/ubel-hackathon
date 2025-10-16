@@ -56,7 +56,7 @@ public class TransactionGeneratorService {
                 .amount(generateRandomAmount())
                 .currency(config.getCurrency())
                 .valueDate(generateFutureDate())
-                .trackingId(actualTransactionId)
+                .trackingId(UUID.randomUUID().toString())
                 .reference(generateReference())
                 .paymentRail(paymentRail)
                 .provider(provider)
