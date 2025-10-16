@@ -31,9 +31,15 @@ public class TransactionGeneratorService {
         ProviderConfig config = configProperties.getConfig(provider, paymentRail);
         List<Transaction> transactions = new ArrayList<>();
 
-        for (int i = 0; i < count; i++) {
-            Transaction transaction = buildTransaction(provider, paymentRail, config, transactionIdStr);
+        if(transactionId != null) {
+          Transaction transaction = buildTransaction(provider, paymentRail, config, transactionIdStr);
+          transactions.add(transaction);
+        }else {
+          for (int i = 0; i < count; i++) {
+            Transaction transaction = buildTransaction(provider, paymentRail, config,
+                transactionIdStr);
             transactions.add(transaction);
+          }
         }
 
         log.info("Generated {} transactions successfully", transactions.size());
