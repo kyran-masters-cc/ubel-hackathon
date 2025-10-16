@@ -1,0 +1,24 @@
+transaction:
+  providers:
+    clearbank:
+      sepa:
+        currency: EUR
+        destinationAccountNumber: FR26TCCL20786956994877
+        senderName: John Smith
+        country: FR
+      fps:
+        currency: GBP
+        destinationAccountNumber: GB29NWBK60161331926819
+        senderName: Jane Doe
+        country: GB
+    currencycloud:
+      sepa:
+        currency: EUR
+        destinationAccountNumber: DE89370400440532013000
+        senderName: Hans Mueller
+        country: DE
+      swift:
+        currency: USD
+        destinationAccountNumber: US12CHASE00000123456789
+        senderName: Robert Johnson
+        country: US
