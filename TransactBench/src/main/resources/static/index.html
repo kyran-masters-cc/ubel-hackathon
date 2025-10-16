@@ -266,9 +266,9 @@
             
             const fetchProviders = async () => {
                 try {
-                    const response = await fetch('/api/providers');
+                    const response = await fetch('/api/transactions/providers');
                     const data = await response.json();
-                    setProviders(data);
+                    setProviders(data.providers || data);
                 } catch (error) {
                     console.error('Error fetching providers:', error);
                     // Fallback data
@@ -278,9 +278,9 @@
             
             const fetchPaymentRails = async () => {
                 try {
-                    const response = await fetch('/api/payment-rails');
+                    const response = await fetch('/api/transactions/payment-rails');
                     const data = await response.json();
-                    setPaymentRails(data);
+                    setPaymentRails(data.paymentRails || data);
                 } catch (error) {
                     console.error('Error fetching payment rails:', error);
                     // Fallback data
@@ -324,11 +324,11 @@
                         const requestData = {
                             provider: selectedProvider,
                             paymentRail: selectedPaymentRail,
-                            numberOfTransactions: numberOfTransactions,
+                            numberOfMessages: transactionId ? 1 : parseInt(numberOfTransactions),
                             transactionId: transactionId
                         };
                         
-                        const response = await fetch('/api/submit', {
+                        const response = await fetch('/api/transactions/generate', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -338,24 +338,40 @@
                         
                         const data = await response.json();
                         
+                        // Create enhanced result with full API response
+                        const enhancedResult = {
+                            success: response.ok,
+                            httpStatus: response.status,
+                            httpStatusText: response.statusText,
+                            apiResponse: data,
+                            requestData: requestData,
+                            timestamp: new Date().toISOString(),
+                            endpoint: '/api/transactions/generate'
+                        };
+                        
                         // Hide rabbit animation and show results
                         setTimeout(() => {
                             setShowRabbit(false);
-                            setResult(data);
+                            setResult(enhancedResult);
                             setLoading(false);
                         }, 500);
                         
                     } catch (error) {
                         console.error('Error submitting form:', error);
-                        // Show result anyway for demo purposes
+                        // Show error response
                         setTimeout(() => {
                             setShowRabbit(false);
                             setResult({
-                                provider: selectedProvider,
-                                paymentRail: selectedPaymentRail,
-                                numberOfTransactions: transactionId ? 1 : numberOfTransactions,
-                                transactionId: transactionId,
-                                status: 'success'
+                                success: false,
+                                error: error.message,
+                                requestData: {
+                                    provider: selectedProvider,
+                                    paymentRail: selectedPaymentRail,
+                                    numberOfMessages: transactionId ? 1 : parseInt(numberOfTransactions),
+                                    transactionId: transactionId
+                                },
+                                timestamp: new Date().toISOString(),
+                                endpoint: '/api/transactions/generate'
                             });
                             setLoading(false);
                         }, 500);
@@ -375,27 +391,101 @@
                 return (
                     <div className="app-container">
                         <h1>TransactBench</h1>
-                        <h2 style={{color: '#ccc', marginBottom: '20px', fontSize: '1.5rem'}}>Configuration Submitted</h2>
+                        <h2 style={{color: result.success ? '#4caf50' : '#f44336', marginBottom: '20px', fontSize: '1.5rem'}}>
+                            {result.success ? 'Transaction Generated Successfully' : 'Transaction Generation Failed'}
+                        </h2>
+                        
                         <div className="result-container">
+                            {/* API Response Status */}
                             <div className="result-item">
-                                <span className="result-label">Selected Provider:</span>
-                                <span className="result-value">{result.provider}</span>
+                                <span className="result-label">HTTP Status:</span>
+                                <span className="result-value" style={{color: result.success ? '#4caf50' : '#f44336'}}>
+                                    {result.httpStatus} {result.httpStatusText}
+                                </span>
                             </div>
+                            
                             <div className="result-item">
-                                <span className="result-label">Selected Payment Rail:</span>
-                                <span className="result-value">{result.paymentRail}</span>
+                                <span className="result-label">Endpoint:</span>
+                                <span className="result-value">{result.endpoint}</span>
                             </div>
+                            
                             <div className="result-item">
-                                <span className="result-label">Number of Transactions:</span>
-                                <span className="result-value">{result.numberOfTransactions}</span>
+                                <span className="result-label">Timestamp:</span>
+                                <span className="result-value">{new Date(result.timestamp).toLocaleString()}</span>
                             </div>
-                            {result.transactionId && (
+                            
+                            {/* Request Data */}
+                            <div className="result-item">
+                                <span className="result-label">Provider:</span>
+                                <span className="result-value">{result.requestData.provider}</span>
+                            </div>
+                            
+                            <div className="result-item">
+                                <span className="result-label">Payment Rail:</span>
+                                <span className="result-value">{result.requestData.paymentRail}</span>
+                            </div>
+                            
+                            <div className="result-item">
+                                <span className="result-label">Number of Messages:</span>
+                                <span className="result-value">{result.requestData.numberOfMessages}</span>
+                            </div>
+                            
+                            {result.requestData.transactionId && (
                                 <div className="result-item">
                                     <span className="result-label">Transaction ID:</span>
-                                    <span className="result-value">{result.transactionId}</span>
+                                    <span className="result-value">{result.requestData.transactionId}</span>
                                 </div>
                             )}
+                            
+                            {/* API Response Data */}
+                            {result.success && result.apiResponse && (
+                                <>
+                                    <div className="result-item">
+                                        <span className="result-label">Generated Transaction IDs:</span>
+                                        <div style={{marginTop: '8px'}}>
+                                            {result.apiResponse.transactionIds ? (
+                                                result.apiResponse.transactionIds.map((id, index) => (
+                                                    <div key={index} className="result-value" style={{fontSize: '14px', marginBottom: '4px'}}>
+                                                        {index + 1}. {id}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span className="result-value">No transaction IDs returned</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* Error Information */}
+                            {!result.success && result.error && (
+                                <div className="result-item">
+                                    <span className="result-label">Error:</span>
+                                    <span className="result-value" style={{color: '#f44336'}}>{result.error}</span>
+                                </div>
+                            )}
+                            
+                            {/* Raw API Response (for debugging) */}
+                            <div className="result-item">
+                                <span className="result-label">Raw API Response:</span>
+                                <div style={{
+                                    marginTop: '8px',
+                                    backgroundColor: '#333',
+                                    padding: '12px',
+                                    borderRadius: '6px',
+                                    fontSize: '12px',
+                                    fontFamily: 'monospace',
+                                    maxHeight: '200px',
+                                    overflow: 'auto',
+                                    border: '1px solid #555'
+                                }}>
+                                    <pre style={{margin: 0, whiteSpace: 'pre-wrap'}}>
+                                        {JSON.stringify(result.apiResponse || result.error || 'No response data', null, 2)}
+                                    </pre>
+                                </div>
+                            </div>
                         </div>
+                        
                         <button onClick={resetForm} className="back-button">
                             Configure Again
                         </button>
