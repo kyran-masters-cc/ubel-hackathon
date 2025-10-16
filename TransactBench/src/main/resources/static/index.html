@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransactBench</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #282c34;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .app-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            color: #61dafb;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ccc;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #61dafb;
+            box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.2);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            background-color: #444;
+            color: white;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #61dafb;
+            box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.2);
+        }
+        
+        .form-group input:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .submit-button {
+            background-color: #61dafb;
+            color: #282c34;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .submit-button:hover:not(:disabled) {
+            background-color: #21a9d1;
+            transform: translateY(-1px);
+        }
+        
+        .submit-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-container {
+            background-color: rgba(97, 218, 251, 0.1);
+            border: 1px solid #61dafb;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .result-label {
+            display: block;
+            font-weight: bold;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            display: block;
+            font-size: 18px;
+            color: #61dafb;
+            font-weight: bold;
+        }
+        
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+        
+        .back-button:hover {
+            background-color: #545b62;
+        }
+        
+        .loading {
+            opacity: 0.7;
+        }
+        
+        .rabbit-animation {
+            position: fixed;
+            top: 50%;
+            left: -100px;
+            transform: translateY(-50%);
+            font-size: 4rem;
+            z-index: 1000;
+            animation: runRabbit 3s ease-in-out;
+        }
+        
+        @keyframes runRabbit {
+            0% {
+                left: -100px;
+                transform: translateY(-50%) rotate(0deg);
+            }
+            30% {
+                left: 50%;
+                transform: translateY(-50%) translateX(-50%) rotate(10deg);
+            }
+            70% {
+                left: 50%;
+                transform: translateY(-50%) translateX(-50%) rotate(-10deg);
+            }
+            100% {
+                left: calc(100% + 100px);
+                transform: translateY(-50%) rotate(0deg);
+            }
+        }
+        
+        .message-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(40, 44, 52, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            color: white;
+        }
+        
+        .message-text {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        function PaymentForm() {
+            const [providers, setProviders] = useState([]);
+            const [paymentRails, setPaymentRails] = useState([]);
+            const [selectedProvider, setSelectedProvider] = useState('');
+            const [selectedPaymentRail, setSelectedPaymentRail] = useState('');
+            const [numberOfTransactions, setNumberOfTransactions] = useState('1');
+            const [transactionId, setTransactionId] = useState('');
+            const [result, setResult] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [showRabbit, setShowRabbit] = useState(false);
+            const [rabbitMessage, setRabbitMessage] = useState('');
+            
+            useEffect(() => {
+                fetchProviders();
+                fetchPaymentRails();
+            }, []);
+            
+            // UUID validation function
+            const isValidUUID = (uuid) => {
+                const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+                return uuidRegex.test(uuid);
+            };
+            
+            // Generate UUID function
+            const generateUUID = () => {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            };
+            
+            const fetchProviders = async () => {
+                try {
+                    setProviders(['cfsb', 'lhv', 'arkea', 'dcbank']);
+                    // // const response = await fetch('/api/transactions/providers');
+                    // // const data = await response.json();
+                    // setProviders(data.providers || data);
+                } catch (error) {
+                    console.error('Error fetching providers:', error);
+                    // Fallback data
+
+                }
+            };
+            
+            const fetchPaymentRails = async () => {
+                try {
+                    setPaymentRails(['ACH', 'FEDWIRE', 'SEPA', 'INST', 'TIPS']);
+                } catch (error) {
+                    console.error('Error fetching payment rails:', error);
+                    // Fallback data
+                    setPaymentRails(['ach', 'fedwire']);
+                }
+            };
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                
+                if (!selectedProvider || !selectedPaymentRail) {
+                    alert('Please select both provider and payment rail');
+                    return;
+                }
+                
+                // Validate transaction ID format if provided
+                if (transactionId && !isValidUUID(transactionId)) {
+                    alert('Please enter a valid UUID format for Transaction ID\n(e.g., 123e4567-e89b-12d3-a456-426614174000)');
+                    return;
+                }
+                
+                // Validate number of transactions if no transaction ID
+                if (!transactionId && (!numberOfTransactions || numberOfTransactions < 1)) {
+                    alert('Please enter a valid number of transactions');
+                    return;
+                }
+                
+                setLoading(true);
+                setShowRabbit(true);
+                setRabbitMessage('🐰 Sending transaction to RabbitMQ...');
+                
+                // Simulate RabbitMQ message sending with animation
+                setTimeout(() => {
+                    setRabbitMessage('📨 Processing payment through message queue...');
+                }, 1000);
+                
+                setTimeout(async () => {
+                    setRabbitMessage('✅ Message delivered! Processing transaction...');
+                    
+                    try {
+                        const requestData = {
+                            provider: selectedProvider,
+                            paymentRail: selectedPaymentRail,
+                            numberOfMessages: transactionId ? 1 : parseInt(numberOfTransactions),
+                            transactionId: transactionId
+                        };
+                        
+                        const response = await fetch('/api/transactions/generate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(requestData),
+                        });
+                        
+                        const data = await response.json();
+                        
+                        // Create enhanced result with full API response
+                        const enhancedResult = {
+                            success: response.ok,
+                            httpStatus: response.status,
+                            httpStatusText: response.statusText,
+                            apiResponse: data,
+                            requestData: requestData,
+                            timestamp: new Date().toISOString(),
+                            endpoint: '/api/transactions/generate'
+                        };
+                        
+                        // Hide rabbit animation and show results
+                        setTimeout(() => {
+                            setShowRabbit(false);
+                            setResult(enhancedResult);
+                            setLoading(false);
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                        // Show error response
+                        setTimeout(() => {
+                            setShowRabbit(false);
+                            setResult({
+                                success: false,
+                                error: error.message,
+                                requestData: {
+                                    provider: selectedProvider,
+                                    paymentRail: selectedPaymentRail,
+                                    numberOfMessages: transactionId ? 1 : parseInt(numberOfTransactions),
+                                    transactionId: transactionId
+                                },
+                                timestamp: new Date().toISOString(),
+                                endpoint: '/api/transactions/generate'
+                            });
+                            setLoading(false);
+                        }, 500);
+                    }
+                }, 2500);
+            };
+            
+            const resetForm = () => {
+                setSelectedProvider('');
+                setSelectedPaymentRail('');
+                setNumberOfTransactions('1');
+                setTransactionId('');
+                setResult(null);
+            };
+            
+            if (result) {
+                return (
+                    <div className="app-container">
+                        <h1>TransactBench</h1>
+                        <h2 style={{color: result.success ? '#4caf50' : '#f44336', marginBottom: '20px', fontSize: '1.5rem'}}>
+                            {result.success ? 'Transaction Generated Successfully' : 'Transaction Generation Failed'}
+                        </h2>
+                        
+                        <div className="result-container">
+                            {/* API Response Status */}
+                            <div className="result-item">
+                                <span className="result-label">HTTP Status:</span>
+                                <span className="result-value" style={{color: result.success ? '#4caf50' : '#f44336'}}>
+                                    {result.httpStatus} {result.httpStatusText}
+                                </span>
+                            </div>
+                            
+                            <div className="result-item">
+                                <span className="result-label">Endpoint:</span>
+                                <span className="result-value">{result.endpoint}</span>
+                            </div>
+                            
+                            <div className="result-item">
+                                <span className="result-label">Timestamp:</span>
+                                <span className="result-value">{new Date(result.timestamp).toLocaleString()}</span>
+                            </div>
+                            
+                            {/* Request Data */}
+                            <div className="result-item">
+                                <span className="result-label">Provider:</span>
+                                <span className="result-value">{result.requestData.provider}</span>
+                            </div>
+                            
+                            <div className="result-item">
+                                <span className="result-label">Payment Rail:</span>
+                                <span className="result-value">{result.requestData.paymentRail}</span>
+                            </div>
+                            
+                            <div className="result-item">
+                                <span className="result-label">Number of Messages:</span>
+                                <span className="result-value">{result.requestData.numberOfMessages}</span>
+                            </div>
+                            
+                            {result.requestData.transactionId && (
+                                <div className="result-item">
+                                    <span className="result-label">Transaction ID:</span>
+                                    <span className="result-value">{result.requestData.transactionId}</span>
+                                </div>
+                            )}
+                            
+                            {/* API Response Data */}
+                            {result.success && result.apiResponse && (
+                                <>
+                                    <div className="result-item">
+                                        <span className="result-label">Generated Transaction IDs:</span>
+                                        <div style={{marginTop: '8px'}}>
+                                            {result.apiResponse.transactionIds ? (
+                                                result.apiResponse.transactionIds.map((id, index) => (
+                                                    <div key={index} className="result-value" style={{fontSize: '14px', marginBottom: '4px'}}>
+                                                        {index + 1}. {id}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span className="result-value">No transaction IDs returned</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* Error Information */}
+                            {!result.success && result.error && (
+                                <div className="result-item">
+                                    <span className="result-label">Error:</span>
+                                    <span className="result-value" style={{color: '#f44336'}}>{result.error}</span>
+                                </div>
+                            )}
+                            
+                            {/* Raw API Response (for debugging) */}
+                            <div className="result-item">
+                                <span className="result-label">Raw API Response:</span>
+                                <div style={{
+                                    marginTop: '8px',
+                                    backgroundColor: '#333',
+                                    padding: '12px',
+                                    borderRadius: '6px',
+                                    fontSize: '12px',
+                                    fontFamily: 'monospace',
+                                    maxHeight: '200px',
+                                    overflow: 'auto',
+                                    border: '1px solid #555'
+                                }}>
+                                    <pre style={{margin: 0, whiteSpace: 'pre-wrap'}}>
+                                        {JSON.stringify(result.apiResponse || result.error || 'No response data', null, 2)}
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button onClick={resetForm} className="back-button">
+                            Configure Again
+                        </button>
+                    </div>
+                );
+            }
+            
+            return (
+                <div className="app-container">
+                    {showRabbit && (
+                        <div className="message-overlay">
+                            <div className="rabbit-animation">🐰</div>
+                            <div className="message-text">{rabbitMessage}</div>
+                        </div>
+                    )}
+                    <h1>TransactBench</h1>
+                    <h2 style={{color: '#ccc', marginBottom: '30px', fontSize: '1.5rem'}}>Transaction Configuration</h2>
+                    <div className={`form-container ${loading ? 'loading' : ''}`}>
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="provider">Provider:</label>
+                                <select
+                                    id="provider"
+                                    value={selectedProvider}
+                                    onChange={(e) => setSelectedProvider(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select a provider</option>
+                                    {providers.map((provider) => (
+                                        <option key={provider} value={provider}>
+                                            {provider}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="form-group">
+                                <label htmlFor="paymentRail">Payment Rail:</label>
+                                <select
+                                    id="paymentRail"
+                                    value={selectedPaymentRail}
+                                    onChange={(e) => setSelectedPaymentRail(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select a payment rail</option>
+                                    {paymentRails.map((rail) => (
+                                        <option key={rail} value={rail}>
+                                            {rail}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="form-group">
+                                <label htmlFor="transactionId">Transaction ID (optional UUID):</label>
+                                <div style={{display: 'flex', gap: '8px', alignItems: 'flex-start'}}>
+                                    <input
+                                        type="text"
+                                        id="transactionId"
+                                        value={transactionId}
+                                        onChange={(e) => setTransactionId(e.target.value)}
+                                        placeholder="e.g., 123e4567-e89b-12d3-a456-426614174000"
+                                        style={{flex: 1}}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setTransactionId(generateUUID())}
+                                        style={{
+                                            padding: '12px 16px',
+                                            backgroundColor: '#6c757d',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        Generate UUID
+                                    </button>
+                                </div>
+                                <small style={{color: '#ccc', fontSize: '12px', marginTop: '4px', display: 'block'}}>
+                                    Must be valid UUID format. If provided, number of transactions will be set to 1
+                                </small>
+                            </div>
+                            
+                            {transactionId.trim() === '' && (
+                                <div className="form-group">
+                                    <label htmlFor="numberOfTransactions">Number of Transactions:</label>
+                                    <input
+                                        type="number"
+                                        id="numberOfTransactions"
+                                        value={numberOfTransactions}
+                                        onChange={(e) => setNumberOfTransactions(e.target.value)}
+                                        min="1"
+                                        required
+                                    />
+                                </div>
+                            )}
+                            
+                            <button type="submit" className="submit-button" disabled={loading}>
+                                {loading ? 'Submitting...' : 'Submit'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PaymentForm />);
+    </script>
+</body>
+</html>
