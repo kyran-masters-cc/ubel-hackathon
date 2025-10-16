@@ -279,7 +279,7 @@
             
             const fetchPaymentRails = async () => {
                 try {
-                    setPaymentRails(['ach', 'fedwire', 'SEPA', 'SEPA_INST', 'TIPS']);
+                    setPaymentRails(['ACH', 'FEDWIRE', 'SEPA', 'INST', 'TIPS']);
                 } catch (error) {
                     console.error('Error fetching payment rails:', error);
                     // Fallback data
