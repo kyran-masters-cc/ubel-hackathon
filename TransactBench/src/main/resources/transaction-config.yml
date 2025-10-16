@@ -1,5 +1,21 @@
 transaction:
   providers:
+    lhv:
+      SEPA:
+        currency: EUR
+        destinationAccountNumber: FR26TCCL20786956994877
+        senderName: John Smith
+        country: FR
+      INST:
+        currency: EUR
+        destinationAccountNumber: FR26TCCL20786956994877
+        senderName: John Smith
+        country: FR
+      TIPS:
+        currency: EUR
+        destinationAccountNumber: FR26TCCL20786956994877
+        senderName: John Smith
+        country: FR
     clearbank:
       sepa:
         currency: EUR

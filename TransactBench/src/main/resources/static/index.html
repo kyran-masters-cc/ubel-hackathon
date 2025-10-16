@@ -266,21 +266,20 @@
             
             const fetchProviders = async () => {
                 try {
-                    const response = await fetch('/api/transactions/providers');
-                    const data = await response.json();
-                    setProviders(data.providers || data);
+                    setProviders(['cfsb', 'lhv', 'arkea', 'dcbank']);
+                    // // const response = await fetch('/api/transactions/providers');
+                    // // const data = await response.json();
+                    // setProviders(data.providers || data);
                 } catch (error) {
                     console.error('Error fetching providers:', error);
                     // Fallback data
-                    setProviders(['cfsb', 'lhv', 'arkea', 'dcbank']);
+
                 }
             };
             
             const fetchPaymentRails = async () => {
                 try {
-                    const response = await fetch('/api/transactions/payment-rails');
-                    const data = await response.json();
-                    setPaymentRails(data.paymentRails || data);
+                    setPaymentRails(['ach', 'fedwire', 'SEPA', 'SEPA_INST', 'TIPS']);
                 } catch (error) {
                     console.error('Error fetching payment rails:', error);
                     // Fallback data
